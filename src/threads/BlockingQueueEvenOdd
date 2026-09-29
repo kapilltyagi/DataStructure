@@ -1,0 +1,48 @@
+package threads;
+
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class BlockingQueueEvenOdd {
+
+	public static void main(String[] args) {
+		BlockingQueue<Integer> oddQueue = new LinkedBlockingQueue<>();
+		BlockingQueue<Integer> evenQueue = new LinkedBlockingQueue<>();
+		
+		Thread oddThread = new Thread(()->{
+			for (int i = 1; i <= 9; i+=2) {
+				try {
+					oddQueue.take();
+					System.out.println("Odd: "+i);
+					evenQueue.put(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		Thread evenThread =new Thread(()->{
+			for (int i = 2; i <=10 ; i+=2) {
+				try {
+					evenQueue.take();
+					System.out.println("Even: "+i);
+					oddQueue.put(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		evenThread.start();
+		oddThread.start();
+		try {
+			oddQueue.put(1);
+			evenThread.join();
+			oddThread.join();
+		}catch(InterruptedException e) {
+			
+		}
+	}
+}
